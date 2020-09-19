@@ -51,13 +51,6 @@
   ],
   "options": [
     {
-      "variable": "show_search",
-      "label": "Show search",
-      "type": "boolean",
-      "default": false,
-      "description": "Shows a search field"
-    },
-    {
       "variable": "product_image_size",
       "label": "Product image size",
       "type": "select",
