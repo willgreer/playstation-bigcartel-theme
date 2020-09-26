@@ -9,26 +9,22 @@
   <meta name="keywords" content="{{ page.meta_keywords }}">
 
   <link href="{{ theme | theme_css_url }}" media="screen" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"
-    integrity="sha512-+EoPw+Fiwh6eSeRK7zwIKG2MA8i3rV/DGa3tdttQGgWyatG/SkncT53KHQaS5Jh9MNOT3dmFL0FjTY08And/Cw=="
-    crossorigin="anonymous" />
-
+  
+  <script src="{{ 'api' | theme_js_url }}"></script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+  <script src="https://kit.fontawesome.com/d4eab0a8e6.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
+    integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn"
+    crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"
     integrity="sha512-IsNh5E3eYy3tr/JiX2Yx4vsCujtkhwl7SLqgnwLNgf04Hrt9BT9SXlLlZlWx+OK4ndzAoALhsMNcCmkggjZB1w=="
     crossorigin="anonymous"></script>
-
-  <script src="{{ theme | theme_js_url }}" type="text/javascript"></script>
-  <script src="https://kit.fontawesome.com/d4eab0a8e6.js" crossorigin="anonymous"></script>
-
-
   {{ head_content }}
 </head>
 
 <body id="{{ page.permalink }}" class="{{ page.category }}">
-
   {% if errors != blank %}
   <ul class="unstyled errors">
     {% for error in errors %}
@@ -38,41 +34,126 @@
   {% endif %}
 
   {% if page.category == 'custom' %}
-  {{ page_content | paragraphs }}
+  <div id="custom_page">
+    {{ page_content | paragraphs }}
+  </div>
   {% else %}
   {{ page_content }}
   {% endif %}
 
-
-
-
   <script>
+    $(document).ready(function () {
 
-    let defaultCursor = document.querySelector(".cursor");
-    let shopImage = document.querySelectorAll(".container .item");
+        $('#menu').hide();
 
-    window.addEventListener("mousemove", cursor);
+      let defaultCursor = document.querySelector(".cursor");
+      let shopImage = document.querySelectorAll(".container .items");
 
-    function cursor(e) {
-      defaultCursor.style.top = e.pageY + "px";
-      defaultCursor.style.left = e.pageX + "px";
-    }
+      window.addEventListener("mousemove", cursor);
 
-    shopImage.forEach((item) => {
-      item.addEventListener("mouseleave", () => {
-        defaultCursor.classList.remove("grow-cursor");
-        item.classList.remove("grow-image");
+      function cursor(e) {
+        defaultCursor.style.top = e.pageY + "px";
+        defaultCursor.style.left = e.pageX + "px";
+      }
+
+      shopImage.forEach((item) => {
+        item.addEventListener("mouseleave", () => {
+          defaultCursor.classList.remove("grow-cursor");
+          item.classList.remove("grow-image");
+        });
+        item.addEventListener("mouseover", () => {
+          defaultCursor.classList.add("grow-cursor");
+          item.classList.add("grow-image");
+        });
       });
-      item.addEventListener("mouseover", () => {
-        defaultCursor.classList.add("grow-cursor");
-        item.classList.add("grow-image");
+
+
+      $('#btn').on('click', function () {
+        $('#menu').show('slow');
+        $(this).addClass('clicked');
+        $(this).toggleClass('hover');
+        $(this).fadeTo('slow', 0.1);
+      })
+
+      $('#close').on('click', function () {
+        $('#menu').hide('slow');
+        $('#btn').removeClass('clicked', 'slow');
+      })
+
+      $('a, i, #btn').hover(function () {
+        $('.cursor').toggleClass("grow-cursor");
+      })
+
+      $('a, i').hover(function () {
+        $(this).toggleClass('hover');
+      })
+
+      $('i').on('click', function () {
+        $('#btn').fadeTo('slow', 1)
+      })
+
+      $('#custom-page a').addClass('ajax-popup-link');
+
+      $('.ajax-popup-link, #submit').magnificPopup({
+        type: 'ajax',
+        key: 'ajax-popup',
+        preloader: false,
+        fixedContentPos: false,
+        fixedBgPos: true,
+        closeOnBgClick: false,
+        closeBtnInside: true,
+        cursor: 'mfp-ajax-cur', // CSS class that will be added to body during the loading (adds "progress" cursor)
+        tError: '<a href="%url%">The content</a> could not be loaded.',
+        callbacks: {
+          open: async function () {
+            await success();
+          },
+          afterClose: async function () {
+            window.location.reload();
+          },
+        }
+      });
+
+      $(document).on('click', '#validate', function () {
+        $(this).closest('form').ajaxForm({
+          beforeSubmit: validate,
+        });
+        function validate(formData, $form, options) {
+          for (var i = 0; i < formData.length; i++) {
+            if (!formData[i].value && formData[i].name != 'submit') {
+              $('.form-message').html('<p>Please enter a value for all related fields!<br/> The form has <strong>not</strong> been submitted</p>');
+              return false;
+            }
+          }
+          $('.form-message').html('<p>Your message has been sent</p>');
+          $('#contact_form > ul').hide();
+          $('#contact').append('<a href="/products" class="return-to-shop-link">Return to Shop</a>');
+        }
+      });
+
+      $(document).on('focus', 'input', function () {
+        $('.form-message').html(null);
+      });
+
+      $(document).on('click', '#submit', function () {
+        $.ajax({
+          type: "post",
+        });
+
+        if ($(this).hasClass('remove')) {
+          $(this).closest('li').find('input[id$=_qty]').val(0);
+
+        }
+        $(this).closest('form').ajaxSubmit();
+      });
+
+      $(document).magnificPopup({
+        delegate: '#submit',
       });
     });
 
-
-  $('body').css('display', 'none');
-  $('body').fadeToggle(2000);
   </script>
+
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <div id="cart">
-
+  <div class="blur"></div>
   {% if cart.items != blank %}
-  <form method="post" action="/cart">
+  <form method="post" action="/cart" id="cart_form">
     <ul class="unstyled">
       {% for item in cart.items %}
       <li>
@@ -19,7 +19,7 @@
         <p>
           {{ item | item_quantity_input }}
           {{ item.price | money_with_sign }}
-          <a href="/products" class="remove">&times;</a>
+          <a href="/cart" class="remove" id="submit">&times;</a>
         </p>
       </li>
       {% endfor %}
@@ -27,7 +27,7 @@
 
     <p>
       <strong>Subtotal</strong>
-      <span>{{ cart.subtotal | money_with_sign }}</span>
+      <span id="cart_total">{{ cart.subtotal | money_with_sign }}</span>
     </p>
     <button type="submit" name="checkout" title="Checkout">Checkout</button>
   </form>
@@ -35,7 +35,7 @@
   {% else %}
 
   <div>
-    <p><strong>Your cart is empty!</strong> Sounds like a good time to <a href="/">start shopping &rarr;</a></p>
+    <p><strong>Your cart is empty!</strong> Sounds like a good time to <a href="/products">start shopping &rarr;</a></p>
   </div>
 
   {% endif %}

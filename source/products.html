@@ -1,10 +1,9 @@
 <div class="cursor"></div>
 
-
 <header>
   <div class="title-left">
     <h1>
-      <a href="/products" title="{{ store.name | escape }}">
+      <a href="/" title="{{ store.name | escape }}">
         Memory Card<span>(QCK)</span>/1 <br>
         733 KB free
       </a>
@@ -15,42 +14,42 @@
     <h1>
       <a href="/cart" class="ajax-popup-link">
         Your System <br>
-        Configuration ({{ cart.total | money_with_sign }})
+        Configuration
+        <span id='#main_total'>({{ cart.subtotal | money_with_sign }})</span>
       </a>
-      </span>
     </h1>
   </div>
 </header>
+<div class="container-wrap">
 
 {% paginate products from products.current by theme.products_per_page %}
 {% if products != blank %}
-<div class="container">
-  <ul>
-    {% for product in products %}
-    <li class="{{ product.css_class }} item">
-      <a href="{{ product.url }}" class="ajax-popup-link">
-        <img alt="Image of {{ product.name | escape }}"
-          src="{{ product.image | product_image_url size: theme.product_image_size }}">
-      </a>
-    </li>
-  </ul>
-  {% endfor %}
-
+  <div class="container">
+    <ul class="items">
+      {% for product in products %}
+      <li class="items">
+        <a href="{{ product.url }}" class="ajax-popup-link">
+          <img alt="Image of {{ product.name | escape }}"
+            src="{{ product.image | product_image_url size: theme.product_image_size }}">
+        </a>
+      </li>
+    </ul>
+    {% endfor %}
+  </div>
 </div>
-
-
 {% else %}
 <p>No products found.</p>
 {% endif %}
 {% endpaginate %}
 
-
 <div class="menu-wrap">
   <h1 id="btn">Options</h1>
   <div class="menu" id="menu">
-    <div>
-      <div>
-        <i class="far fa-times-circle" id="close"></i>
+    <div class="hidden_menu_wrap">
+      <div class="hidden_menu">
+        <div class="menu-close-btn">
+          <i class="far fa-times-circle" id="close"></i>
+        </div>
         <ul>
           {% for page in pages.all %}
           <li id="custom-page">{{ page | link_to }}</li>
@@ -64,47 +63,3 @@
     </div>
   </div>
 </div>
-
-
-
-<script type="text/javascript">
-  $(document).ready(function () {
-
-    $('#menu').hide();
-
-    $('#btn').on('click', function () {
-      $('#menu').show('slow');
-      $(this).addClass('clicked');
-      $(this).toggleClass('hover');
-      $(this).fadeTo('slow', 0.1);
-    })
-
-    $('#close').on('click', function () {
-      $('#menu').hide('slow');
-      $('#btn').removeClass('clicked', 'slow');
-    })
-
-    $('a, i, #btn').hover(function () {
-      $('.cursor').toggleClass("grow-cursor");
-    })
-
-    $('a, i').hover(function () {
-      $(this).toggleClass('hover');
-    })
-
-    $('i').on('click', function () {
-      $('#btn').fadeTo('slow', 1)
-    })
-
-    $('#custom-page a').addClass('ajax-popup-link');
-
-    $('.ajax-popup-link').magnificPopup({
-      type: 'ajax',
-      key: 'product-popup',
-      preloader: false,
-      // mainClass: "myClass",
-    });
-
-
-  });
-</script>
