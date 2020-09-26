@@ -9,7 +9,7 @@
   <meta name="keywords" content="{{ page.meta_keywords }}">
 
   <link href="{{ theme | theme_css_url }}" media="screen" rel="stylesheet" type="text/css">
-  
+
   <script src="{{ 'api' | theme_js_url }}"></script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -47,7 +47,7 @@
         $('#menu').hide();
 
       let defaultCursor = document.querySelector(".cursor");
-      let shopImage = document.querySelectorAll(".container .items");
+      let shopImage = document.querySelectorAll(".container > .items");
 
       window.addEventListener("mousemove", cursor);
 
@@ -66,6 +66,8 @@
           item.classList.add("grow-image");
         });
       });
+
+
 
 
       $('#btn').on('click', function () {
